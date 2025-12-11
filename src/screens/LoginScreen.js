@@ -1,61 +1,49 @@
-console.log("### LOGIN SCREEN ACILDI ###");
+// src/screens/LoginScreen.js
+import React from "react";
+import { View, Text, StyleSheet, Image } from "react-native";
+import PrimaryButton from "../components/PrimaryButton";
+import { useAuth } from "../context/AuthContext";
 
-
-import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import * as AuthSession from "expo-auth-session";
-
-const SPOTIFY_CLIENT_ID = "c1a79f1f71bb46b28cc6a899875a66b6"; 
-const SPOTIFY_SCOPES = [
-  "user-read-email",
-  "user-read-private",
-  "playlist-read-private",
-  "playlist-modify-private",
-  "user-library-read",
-  "user-library-modify",
-];
-
-const discovery = {
-  authorizationEndpoint: "https://accounts.spotify.com/authorize",
-  tokenEndpoint: "https://accounts.spotify.com/api/token",
-};
-
+/**
+ * LoginScreen currently performs a "fake" login:
+ * pressing the button marks the user as authenticated.
+ *
+ * Later this screen will host the Spotify OAuth flow.
+ */
 export default function LoginScreen() {
-  const redirectUri = AuthSession.makeRedirectUri({
-    useProxy: true,
-  });
-  console.log("REDIRECT:", redirectUri);
+  const { login } = useAuth();
 
-
-  const [request, response, promptAsync] = AuthSession.useAuthRequest(
-    {
-      clientId: SPOTIFY_CLIENT_ID,
-      scopes: SPOTIFY_SCOPES,
-      responseType: AuthSession.ResponseType.Token,
-      usePKCE: false,
-      redirectUri,
-    },
-    discovery
-  );
-
-  useEffect(() => {
-    if (response?.type === "success") {
-      const token = response.params.access_token;
-      console.log("ACCESS TOKEN:", token);
-      // burada ana sayfaya yönlendirme gelecek (henüz yok)
-    }
-  }, [response]);
+  const handleFakeSpotifyLogin = () => {
+    // For now we simulate a successful Spotify login.
+    // Real OAuth integration will be added on top.
+    login();
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login to Spotify</Text>
+      <View style={styles.logoWrapper}>
+        <View style={styles.logoCircle}>
+          <Text style={styles.logoText}>R</Text>
+        </View>
+        <Text style={styles.brand}>Routune (working name)</Text>
+      </View>
 
-      <TouchableOpacity
-        style={styles.btn}
-        onPress={() => promptAsync({ useProxy: true })}
-      >
-        <Text style={styles.btnText}>Login with Spotify</Text>
-      </TouchableOpacity>
+      <Text style={styles.title}>Smart, context-aware music.</Text>
+      <Text style={styles.subtitle}>
+        Connect once, and let your routines, locations and mood decide what
+        plays next.
+      </Text>
+
+      <View style={styles.spacer} />
+
+      <PrimaryButton
+        title="Continue with Spotify"
+        onPress={handleFakeSpotifyLogin}
+      />
+
+      <Text style={styles.helperText}>
+        This is a prototype. Spotify login is simulated for now.
+      </Text>
     </View>
   );
 }
@@ -63,24 +51,56 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
-    justifyContent: "center",
+    backgroundColor: "#020202",
     alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 24,
+  },
+  logoWrapper: {
+    alignItems: "center",
+    marginBottom: 32,
+  },
+  logoCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "#111",
+    borderWidth: 2,
+    borderColor: "#1DB954",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  logoText: {
+    color: "#1DB954",
+    fontSize: 32,
+    fontWeight: "800",
+  },
+  brand: {
+    color: "#eee",
+    fontSize: 16,
+    letterSpacing: 1,
   },
   title: {
     color: "#fff",
     fontSize: 24,
-    marginBottom: 24,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 12,
   },
-  btn: {
-    backgroundColor: "#1DB954",
-    paddingVertical: 14,
-    paddingHorizontal: 30,
-    borderRadius: 50,
+  subtitle: {
+    color: "#aaa",
+    fontSize: 14,
+    textAlign: "center",
+    lineHeight: 20,
   },
-  btnText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
+  spacer: {
+    height: 48,
+  },
+  helperText: {
+    color: "#666",
+    fontSize: 11,
+    marginTop: 16,
+    textAlign: "center",
   },
 });
