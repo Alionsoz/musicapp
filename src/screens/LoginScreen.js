@@ -1,49 +1,41 @@
 // src/screens/LoginScreen.js
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import PrimaryButton from "../components/PrimaryButton";
-import { useAuth } from "../context/AuthContext";
+import { useUserStore } from "../store/userStore";
 
 /**
- * LoginScreen currently performs a "fake" login:
- * pressing the button marks the user as authenticated.
- *
- * Later this screen will host the Spotify OAuth flow.
+ * Login screen where the user begins authentication.
+ * For now this screen uses a fake Spotify login for rapid development.
  */
 export default function LoginScreen() {
-  const { login } = useAuth();
+  const login = useUserStore((state) => state.login);
 
-  const handleFakeSpotifyLogin = () => {
-    // For now we simulate a successful Spotify login.
-    // Real OAuth integration will be added on top.
-    login();
-  };
+  function handleFakeSpotifyLogin() {
+    const fakeUser = {
+      id: "user_123",
+      name: "Ali",
+      username: "alion",
+      country: "TR",
+      image:
+        "https://i.scdn.co/image/ab6775700000ee85e43ad12f489b6e54c2a1a7e2",
+    };
+
+    // Update global state only; navigation will react automatically
+    login(fakeUser);
+  }
 
   return (
     <View style={styles.container}>
-      <View style={styles.logoWrapper}>
-        <View style={styles.logoCircle}>
-          <Text style={styles.logoText}>R</Text>
-        </View>
-        <Text style={styles.brand}>Routune (working name)</Text>
-      </View>
-
-      <Text style={styles.title}>Smart, context-aware music.</Text>
+      <Text style={styles.title}>Welcome to Routine</Text>
       <Text style={styles.subtitle}>
-        Connect once, and let your routines, locations and mood decide what
-        plays next.
+        Smart music that adapts to your routines
       </Text>
-
-      <View style={styles.spacer} />
 
       <PrimaryButton
-        title="Continue with Spotify"
+        label="Continue with Spotify"
         onPress={handleFakeSpotifyLogin}
       />
-
-      <Text style={styles.helperText}>
-        This is a prototype. Spotify login is simulated for now.
-      </Text>
     </View>
   );
 }
@@ -51,56 +43,22 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#020202",
+    backgroundColor: "#050505",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 24,
   },
-  logoWrapper: {
-    alignItems: "center",
-    marginBottom: 32,
-  },
-  logoCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: "#111",
-    borderWidth: 2,
-    borderColor: "#1DB954",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
-  },
-  logoText: {
-    color: "#1DB954",
-    fontSize: 32,
-    fontWeight: "800",
-  },
-  brand: {
-    color: "#eee",
-    fontSize: 16,
-    letterSpacing: 1,
-  },
   title: {
-    color: "#fff",
-    fontSize: 24,
+    fontSize: 32,
+    color: "#FFFFFF",
     fontWeight: "700",
-    textAlign: "center",
     marginBottom: 12,
+    textAlign: "center",
   },
   subtitle: {
-    color: "#aaa",
-    fontSize: 14,
+    fontSize: 16,
+    color: "#AAAAAA",
     textAlign: "center",
-    lineHeight: 20,
-  },
-  spacer: {
-    height: 48,
-  },
-  helperText: {
-    color: "#666",
-    fontSize: 11,
-    marginTop: 16,
-    textAlign: "center",
+    marginBottom: 32,
   },
 });

@@ -3,18 +3,19 @@ import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 
 /**
- * PrimaryButton is a reusable CTA button used across the app.
- * It provides consistent styling and behavior for primary actions.
+ * PrimaryButton is the main CTA used across the app.
+ * It supports both `label` and `title` prop names for safety.
  */
-export default function PrimaryButton({ title, onPress, disabled }) {
+export default function PrimaryButton({ label, title, onPress, style }) {
+  const text = label ?? title ?? "Button";
+
   return (
     <TouchableOpacity
-      style={[styles.button, disabled && styles.buttonDisabled]}
+      style={[styles.button, style]}
+      activeOpacity={0.85}
       onPress={onPress}
-      disabled={disabled}
-      activeOpacity={0.8}
     >
-      <Text style={styles.label}>{title}</Text>
+      <Text style={styles.text}>{text}</Text>
     </TouchableOpacity>
   );
 }
@@ -22,19 +23,16 @@ export default function PrimaryButton({ title, onPress, disabled }) {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: "#1DB954",
-    borderRadius: 999,
+    paddingHorizontal: 24,
     paddingVertical: 14,
-    paddingHorizontal: 32,
+    borderRadius: 999,
+    minWidth: 220,
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonDisabled: {
-    opacity: 0.4,
-  },
-  label: {
-    color: "#fff",
+  text: {
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
-    letterSpacing: 0.5,
   },
 });
