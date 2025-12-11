@@ -1,110 +1,102 @@
-// src/screens/HomeScreen.js
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import Header from "../components/Header";
-import { Colors, Spacing, Typography, Radius } from "../theme/theme";
-import { useAuth } from "../context/AuthContext";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
+import { useUserStore } from "../store/userStore";
 
-/**
- * HomeScreen shows contextual blocks such as routines, 
- * recently played content, quick actions, etc.
- * 
- * For now we implement the UI skeleton.
- */
+import SectionHeader from "../components/SectionHeader";
+import QuickGridItem from "../components/QuickGridItem";
+import HorizontalPlaylistCard from "../components/HorizontalPlaylistCard";
+import RoutineCard from "../components/RoutineCard";
+
 export default function HomeScreen() {
-  const { username } = useAuth();
+  const user = useUserStore((state) => state.user);
+
+  const quickItems = [
+    { label: "Recently Played", color: "#1DB954" },
+    { label: "Workout Mix", color: "#FF7F50" },
+    { label: "Chill Vibes", color: "#6A5ACD" },
+    { label: "Driving Mode", color: "#20B2AA" },
+  ];
+
+  const playlists = [
+    {
+      id: "1",
+      title: "Focus Flow",
+      cover:
+        "https://i.scdn.co/image/ab67706f0000000281e5e7fa05afd995702d0022",
+    },
+    {
+      id: "2",
+      title: "Fresh Beats",
+      cover:
+        "https://i.scdn.co/image/ab67706f000000026bbd863281c45ffb3917e1e4",
+    },
+  ];
 
   return (
-    <View style={styles.container}>
-      <Header title="Home" />
+    <ScrollView style={styles.container}>
+      {/* Greeting */}
+      <Text style={styles.greeting}>Good Morning, {user?.username}</Text>
 
-      <View style={styles.section}>
-        <Text style={styles.welcome}>
-          Welcome back{username ? `, @${username}` : ""} 👋
-        </Text>
-        <Text style={styles.subtitle}>
-          Your personalized smart music overview.
-        </Text>
+      {/* Quick Grid */}
+      <View style={styles.grid}>
+        {quickItems.map((item, i) => (
+          <QuickGridItem key={i} label={item.label} color={item.color} />
+        ))}
       </View>
 
-      <View style={styles.cardGrid}>
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Gym Routine</Text>
-        </View>
+      <SectionHeader title="Made For You" />
 
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Study Focus</Text>
-        </View>
+      {/* Horizontal Scroll */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {playlists.map((p) => (
+          <HorizontalPlaylistCard
+            key={p.id}
+            title={p.title}
+            cover={p.cover}
+          />
+        ))}
+      </ScrollView>
 
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Evening Relax</Text>
-        </View>
+      <SectionHeader title="Your Routine Picks" />
 
-        <View style={styles.card}>
-          <Text style={styles.cardLabel}>Commute Mix</Text>
-        </View>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Continue Listening</Text>
-        <View style={styles.listenCard}>
-          <Text style={styles.listenText}>No recent playback</Text>
-        </View>
-      </View>
-    </View>
+      {/* Routine Logic (fake for now) */}
+      <RoutineCard
+        title="Morning Energy Mix"
+        description="Based on your mornings and weather."
+      />
+      <RoutineCard
+        title="Workout Booster"
+        description="You seem active this time of day."
+      />
+      <RoutineCard
+        title="Evening Chill Set"
+        description="Relaxing tunes for unwinding."
+      />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#F5F5F7",
+    padding: 18,
     flex: 1,
-    backgroundColor: Colors.background,
   },
-  section: {
-    paddingHorizontal: Spacing.md,
-    marginBottom: Spacing.lg,
+  greeting: {
+    fontSize: 28,
+    fontWeight: "800",
+    color: "#111",
+    marginBottom: 22,
+    marginTop: 10,
   },
-  welcome: {
-    ...Typography.title,
-    color: Colors.textPrimary,
-    marginBottom: Spacing.sm,
-  },
-  subtitle: {
-    ...Typography.body,
-    color: Colors.textSecondary,
-  },
-  sectionTitle: {
-    ...Typography.sectionTitle,
-    color: Colors.textPrimary,
-    marginBottom: Spacing.md,
-  },
-  cardGrid: {
+  grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    paddingHorizontal: Spacing.md,
-    gap: 12,
-  },
-  card: {
-    width: "47%",
-    backgroundColor: Colors.card,
-    padding: Spacing.md,
-    borderRadius: Radius.lg,
-    borderColor: Colors.border,
-    borderWidth: 1,
-  },
-  cardLabel: {
-    color: Colors.textPrimary,
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  listenCard: {
-    backgroundColor: Colors.card,
-    padding: Spacing.md,
-    borderRadius: Radius.md,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  listenText: {
-    color: Colors.textSecondary,
+    justifyContent: "space-between",
   },
 });
