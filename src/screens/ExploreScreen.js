@@ -85,8 +85,9 @@ export default function ExploreScreen() {
   const { playTrack } = useMusicStore();
   const { colors, isDark } = useTheme();
 
-  const accent = colors.primary;
-  const iconStrong = isDark ? "#E8EAFF" : colors.primary;
+  // ✅ SAFE THEME ACCESS (BUG FIX)
+  const accent = colors.primary ?? colors.textPrimary;
+  const iconStrong = isDark ? "#E8EAFF" : (colors.primary ?? colors.textPrimary);
   const iconMuted = isDark ? "#8C91B8" : colors.textMuted;
   const cardBg = isDark ? "rgba(18,18,26,0.92)" : colors.card;
   const borderSoft = isDark ? "rgba(255,255,255,0.08)" : colors.border;
