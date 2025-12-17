@@ -1,69 +1,115 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import { useThemeStore } from "../store/themeStore";
-
-const THEMES = [
-  { key: "dark", label: "Dark", icon: "moon" },
-  { key: "light", label: "Light", icon: "sun" },
-  { key: "system", label: "System", icon: "smartphone" },
-];
+import { useTheme } from "../theme/useTheme";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ThemeScreen() {
   const navigation = useNavigation();
   const { theme, setTheme } = useThemeStore();
+  const { colors, isDark } = useTheme();
+
+  const selectedBg = isDark
+    ? "rgba(255,255,255,0.04)"
+    : colors.surface;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* HEADER */}
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Feather name="chevron-left" size={26} color="#F5F5F7" />
+          <Feather name="chevron-left" size={26} color={colors.textPrimary} />
         </TouchableOpacity>
 
-        <Text style={styles.title}>Theme</Text>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
+          Theme
+        </Text>
+
         <View style={{ width: 26 }} />
       </View>
 
-      {/* OPTIONS */}
-      {THEMES.map((item) => {
-        const active = theme === item.key;
+      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+        Choose how the app looks.
+      </Text>
 
-        return (
-          <TouchableOpacity
-            key={item.key}
-            style={[styles.option, active && styles.optionActive]}
-            onPress={() => setTheme(item.key)}
-            activeOpacity={0.8}
+      {/* DARK */}
+      <TouchableOpacity
+        style={[
+          styles.option,
+          {
+            backgroundColor:
+              theme === "dark" ? selectedBg : colors.surface,
+            borderColor:
+              theme === "dark" ? colors.primary : colors.border,
+          },
+        ]}
+        onPress={() => setTheme("dark")}
+        activeOpacity={0.85}
+      >
+        <View style={styles.optionLeft}>
+          <Feather
+            name="moon"
+            size={18}
+            color={
+              theme === "dark"
+                ? colors.primary
+                : colors.textSecondary
+            }
+          />
+          <Text
+            style={[
+              styles.optionText,
+              { color: colors.textPrimary },
+            ]}
           >
-            <View style={styles.optionLeft}>
-              <Feather
-                name={item.icon}
-                size={18}
-                color={active ? "#050509" : "#F5F5F7"}
-              />
-              <Text
-                style={[
-                  styles.optionText,
-                  active && styles.optionTextActive,
-                ]}
-              >
-                {item.label}
-              </Text>
-            </View>
+            Dark
+          </Text>
+        </View>
 
-            {active && (
-              <Feather name="check" size={18} color="#050509" />
-            )}
-          </TouchableOpacity>
-        );
-      })}
+        {theme === "dark" && (
+          <Feather name="check" size={18} color={colors.primary} />
+        )}
+      </TouchableOpacity>
+
+      {/* LIGHT */}
+      <TouchableOpacity
+        style={[
+          styles.option,
+          {
+            backgroundColor:
+              theme === "light" ? selectedBg : colors.surface,
+            borderColor:
+              theme === "light" ? colors.primary : colors.border,
+          },
+        ]}
+        onPress={() => setTheme("light")}
+        activeOpacity={0.85}
+      >
+        <View style={styles.optionLeft}>
+          <Feather
+            name="sun"
+            size={18}
+            color={
+              theme === "light"
+                ? colors.primary
+                : colors.textSecondary
+            }
+          />
+          <Text
+            style={[
+              styles.optionText,
+              { color: colors.textPrimary },
+            ]}
+          >
+            Light
+          </Text>
+        </View>
+
+        {theme === "light" && (
+          <Feather name="check" size={18} color={colors.primary} />
+        )}
+      </TouchableOpacity>
     </View>
   );
 }
@@ -71,48 +117,39 @@ export default function ThemeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#050509",
     paddingHorizontal: 18,
     paddingTop: 18,
   },
-
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 28,
+    marginBottom: 14,
   },
-  title: {
-    color: "#F5F5F7",
+  headerTitle: {
     fontSize: 20,
     fontWeight: "700",
   },
-
+  subtitle: {
+    fontSize: 13,
+    marginBottom: 18,
+  },
   option: {
+    padding: 16,
+    borderRadius: 18,
+    borderWidth: 1,
+    marginBottom: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-    backgroundColor: "#0E0E11",
-    marginBottom: 14,
-  },
-  optionActive: {
-    backgroundColor: "#F5F5F7",
   },
   optionLeft: {
     flexDirection: "row",
     alignItems: "center",
   },
   optionText: {
-    color: "#F5F5F7",
-    fontSize: 15,
     marginLeft: 12,
-    fontWeight: "500",
-  },
-  optionTextActive: {
-    color: "#050509",
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

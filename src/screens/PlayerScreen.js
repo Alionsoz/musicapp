@@ -1,157 +1,261 @@
-// FINAL PlayerScreen.js
 import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { Image } from "expo-image";
-import { BlurView } from "expo-blur";
-import Slider from "@react-native-community/slider";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { BlurView } from "expo-blur";
 
-import AnimatedPlayPauseButton from "../components/AnimatedPlayPauseButton";
-import Waveform from "../components/Waveform";
-import { useMusicStore } from "../store/musicStore";
-
-const { width } = Dimensions.get("window");
+// ✅ THEME
+import { useThemeStore } from "../store/themeStore";
 
 export default function PlayerScreen() {
-  const { currentTrack, isPlaying, position, togglePlay, setPosition } =
-    useMusicStore();
-
-  if (!currentTrack) {
-    return (
-      <View style={[styles.container, { justifyContent: "center" }]}>
-        <Text style={{ color: "#fff", textAlign: "center", fontSize: 16 }}>
-          No track is playing yet.
-        </Text>
-      </View>
-    );
-  }
-
-  const progress = currentTrack.duration
-    ? position / currentTrack.duration
-    : 0;
-
-  const formatTime = (sec) => {
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 10 === 0 ? 0 : sec % 60);
-    return `${m}:${s < 10 ? "0" : ""}${s}`;
-  };
+  const navigation = useNavigation();
+  const { colors, isDark } = useThemeStore();
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={{ uri: currentTrack.cover }}
-        style={StyleSheet.absoluteFillObject}
-        contentFit="cover"
-        blurRadius={45}
-      />
-      <BlurView intensity={65} tint="dark" style={StyleSheet.absoluteFillObject} />
-      <View style={styles.overlay} />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* HEADER */}
+      <View style={styles.headerRow}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Feather
+            name="chevron-down"
+            size={26}
+            color={colors.textPrimary}
+          />
+        </TouchableOpacity>
 
-      <View style={styles.content}>
-        <View style={styles.topArea}>
-          <Feather name="chevron-down" size={22} color="#fff" />
-          <Text style={styles.playingFrom}>NOW PLAYING</Text>
-          <Feather name="more-horizontal" size={22} color="#fff" />
-        </View>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>
+          Now Playing
+        </Text>
 
-        <View style={styles.coverWrapper}>
-          <Image
-            source={{ uri: currentTrack.cover }}
-            style={styles.cover}
-            contentFit="cover"
+        <TouchableOpacity>
+          <Feather
+            name="more-vertical"
+            size={22}
+            color={colors.textPrimary}
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* COVER */}
+      <View style={styles.coverWrapper}>
+        <BlurView
+          intensity={isDark ? 45 : 30}
+          tint={isDark ? "dark" : "light"}
+          style={[
+            styles.cover,
+            {
+              backgroundColor: isDark
+                ? "rgba(20,20,28,0.85)"
+                : colors.card,
+            },
+          ]}
+        >
+          <Feather
+            name="music"
+            size={64}
+            color={isDark ? "#8A8FAE" : colors.textMuted}
+          />
+        </BlurView>
+      </View>
+
+      {/* SONG INFO */}
+      <View style={styles.info}>
+        <Text style={[styles.songTitle, { color: colors.textPrimary }]}>
+          Blinding Lights
+        </Text>
+        <Text style={[styles.artist, { color: colors.textSecondary }]}>
+          The Weeknd
+        </Text>
+      </View>
+
+      {/* PROGRESS */}
+      <View style={styles.progressWrapper}>
+        <View
+          style={[
+            styles.progressBar,
+            {
+              backgroundColor: isDark
+                ? "rgba(255,255,255,0.15)"
+                : colors.border,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.progressFill,
+              { backgroundColor: colors.textPrimary },
+            ]}
           />
         </View>
 
-        <View style={styles.textArea}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.title} numberOfLines={1}>
-              {currentTrack.title}
-            </Text>
-            <Text style={styles.artist}>{currentTrack.artist}</Text>
-          </View>
-          <Feather name="heart" size={22} color="#1DB954" />
+        <View style={styles.timeRow}>
+          <Text style={[styles.time, { color: colors.textMuted }]}>
+            1:24
+          </Text>
+          <Text style={[styles.time, { color: colors.textMuted }]}>
+            3:20
+          </Text>
         </View>
+      </View>
 
-        <View style={styles.progressSection}>
-          <Slider
-            style={{ width: "100%" }}
-            minimumValue={0}
-            maximumValue={currentTrack.duration || 1}
-            minimumTrackTintColor="#1DB954"
-            maximumTrackTintColor="rgba(255,255,255,0.3)"
-            thumbTintColor="#1DB954"
-            value={position}
-            onValueChange={(val) => setPosition(val)}
+      {/* CONTROLS */}
+      <View style={styles.controls}>
+        <TouchableOpacity>
+          <Feather
+            name="shuffle"
+            size={22}
+            color={isDark ? "#8A8FAE" : colors.textMuted}
           />
+        </TouchableOpacity>
 
-          <View style={styles.timeRow}>
-            <Text style={styles.timeText}>{formatTime(position)}</Text>
-            <Text style={styles.timeText}>
-              -{formatTime((currentTrack.duration || 0) - position)}
-            </Text>
-          </View>
+        <TouchableOpacity>
+          <Feather
+            name="skip-back"
+            size={28}
+            color={colors.textPrimary}
+          />
+        </TouchableOpacity>
 
-          <Waveform progress={progress} />
-        </View>
+        <TouchableOpacity
+          style={[
+            styles.playButton,
+            { backgroundColor: colors.textPrimary },
+          ]}
+        >
+          <Feather
+            name="pause"
+            size={28}
+            color={colors.background}
+          />
+        </TouchableOpacity>
 
-        <View style={styles.controlsRow}>
-          <Feather name="shuffle" size={20} color="rgba(255,255,255,0.7)" />
-          <Feather name="skip-back" size={28} color="#fff" />
-          <AnimatedPlayPauseButton isPlaying={isPlaying} onPress={togglePlay} />
-          <Feather name="skip-forward" size={28} color="#fff" />
-          <Feather name="repeat" size={20} color="rgba(255,255,255,0.7)" />
-        </View>
+        <TouchableOpacity>
+          <Feather
+            name="skip-forward"
+            size={28}
+            color={colors.textPrimary}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity>
+          <Feather
+            name="repeat"
+            size={22}
+            color={isDark ? "#8A8FAE" : colors.textMuted}
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* SECONDARY */}
+      <View style={styles.secondary}>
+        <TouchableOpacity>
+          <Feather
+            name="heart"
+            size={20}
+            color={isDark ? "#FF6B6B" : colors.danger}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity>
+          <Feather
+            name="list"
+            size={20}
+            color={isDark ? "#8A8FAE" : colors.textMuted}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
+/* ---------------- STYLES ---------------- */
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000" },
-  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.55)" },
-  content: {
+  container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 24,
-    paddingBottom: 32,
-    justifyContent: "space-between",
+    paddingTop: 18,
   },
-  topArea: {
+
+  headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 30,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: "600",
   },
 
-  coverWrapper: { alignItems: "center", marginTop: 10 },
+  coverWrapper: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
   cover: {
-    width: width - 70,
-    height: width - 70,
-    borderRadius: 28,
-  },
-
-  textArea: {
-    flexDirection: "row",
+    width: 260,
+    height: 260,
+    borderRadius: 26,
     alignItems: "center",
-    marginTop: 26,
-    marginBottom: 16,
+    justifyContent: "center",
   },
 
-  title: { color: "#fff", fontSize: 24, fontWeight: "700" },
-  artist: { color: "#ccc", fontSize: 15, marginTop: 4 },
+  info: {
+    alignItems: "center",
+    marginBottom: 26,
+  },
+  songTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+  },
+  artist: {
+    marginTop: 6,
+    fontSize: 14,
+  },
 
-  progressSection: { marginTop: 8 },
-
+  progressWrapper: {
+    marginBottom: 34,
+  },
+  progressBar: {
+    height: 4,
+    borderRadius: 2,
+  },
+  progressFill: {
+    width: "45%",
+    height: 4,
+    borderRadius: 2,
+  },
   timeRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 4,
+    marginTop: 6,
   },
-  timeText: { color: "#aaa", fontSize: 12 },
+  time: {
+    fontSize: 12,
+  },
 
-  controlsRow: {
+  controls: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 24,
+    marginBottom: 30,
+  },
+  playButton: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  secondary: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 40,
   },
 });

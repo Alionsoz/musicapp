@@ -10,9 +10,9 @@ import {
 import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 
-// ✅ EKLENEN IMPORTLAR
 import { useNavigation } from "@react-navigation/native";
 import { useMusicStore } from "../store/musicStore";
+import { useTheme } from "../theme/useTheme";
 
 const FEATURED_MIX = {
   title: "Night Drive Mix",
@@ -81,20 +81,33 @@ const TRENDING_TRACKS = [
 export default function ExploreScreen() {
   const [activeCategory, setActiveCategory] = useState("Trending");
 
-  // ✅ EKLENEN SATIRLAR
   const navigation = useNavigation();
   const { playTrack } = useMusicStore();
+  const { colors, isDark } = useTheme();
+
+  const accent = colors.primary;
+  const iconStrong = isDark ? "#E8EAFF" : colors.primary;
+  const iconMuted = isDark ? "#8C91B8" : colors.textMuted;
+  const cardBg = isDark ? "rgba(18,18,26,0.92)" : colors.card;
+  const borderSoft = isDark ? "rgba(255,255,255,0.08)" : colors.border;
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* HEADER */}
       <View style={styles.headerRow}>
-        <Text style={styles.title}>Explore</Text>
-        <Feather name="search" size={22} color="#F5F5F7" />
+        <Text style={[styles.title, { color: colors.textPrimary }]}>
+          Explore
+        </Text>
+        <Feather name="search" size={22} color={iconStrong} />
       </View>
 
       {/* FEATURED HERO */}
-      <TouchableOpacity activeOpacity={0.9} style={styles.heroCard}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        style={[styles.heroCard, { backgroundColor: cardBg }]}
+      >
         <Image
           source={{ uri: FEATURED_MIX.cover }}
           style={styles.heroImage}
@@ -102,38 +115,64 @@ export default function ExploreScreen() {
         />
         <View style={styles.heroOverlay} />
         <View style={styles.heroContent}>
-          <Text style={styles.heroLabel}>FEATURED MIX</Text>
-          <Text style={styles.heroTitle}>{FEATURED_MIX.title}</Text>
-          <Text style={styles.heroSubtitle}>{FEATURED_MIX.subtitle}</Text>
+          <Text style={[styles.heroLabel, { color: accent }]}>
+            FEATURED MIX
+          </Text>
+          <Text style={[styles.heroTitle, { color: colors.textPrimary }]}>
+            {FEATURED_MIX.title}
+          </Text>
+          <Text
+            style={[styles.heroSubtitle, { color: colors.textSecondary }]}
+          >
+            {FEATURED_MIX.subtitle}
+          </Text>
 
           <View style={styles.heroBottomRow}>
             <View style={styles.heroTag}>
-              <Feather name="activity" size={14} color="#A6B1FF" />
-              <Text style={styles.heroTagText}>Dynamic mood-based</Text>
+              <Feather name="activity" size={14} color={accent} />
+              <Text style={[styles.heroTagText, { color: accent }]}>
+                Dynamic mood-based
+              </Text>
             </View>
 
-            <View style={styles.heroPlay}>
-              <Feather name="play" size={20} color="#000" />
+            <View
+              style={[
+                styles.heroPlay,
+                { backgroundColor: colors.textPrimary },
+              ]}
+            >
+              <Feather name="play" size={20} color={colors.background} />
             </View>
           </View>
         </View>
       </TouchableOpacity>
 
       {/* CATEGORIES */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{ marginTop: 18 }}
-      >
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {CATEGORIES.map((cat) => {
           const active = cat === activeCategory;
           return (
             <TouchableOpacity
               key={cat}
-              style={[styles.chip, active && styles.chipActive]}
+              style={[
+                styles.chip,
+                {
+                  backgroundColor: active
+                    ? colors.textPrimary
+                    : "transparent",
+                  borderColor: borderSoft,
+                },
+              ]}
               onPress={() => setActiveCategory(cat)}
             >
-              <Text style={[styles.chipText, active && styles.chipTextActive]}>
+              <Text
+                style={{
+                  color: active
+                    ? colors.background
+                    : colors.textPrimary,
+                  fontWeight: "600",
+                }}
+              >
                 {cat}
               </Text>
             </TouchableOpacity>
@@ -143,15 +182,13 @@ export default function ExploreScreen() {
 
       {/* ARTISTS */}
       <View style={styles.sectionHeaderRow}>
-        <Text style={styles.sectionTitle}>Artists for you</Text>
-        <Text style={styles.sectionLink}>See all</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+          Artists for you
+        </Text>
+        <Text style={{ color: colors.textSecondary }}>See all</Text>
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{ marginBottom: 12 }}
-      >
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {ARTISTS.map((artist) => (
           <View key={artist.id} style={styles.artistCard}>
             <Image
@@ -159,48 +196,59 @@ export default function ExploreScreen() {
               style={styles.artistImage}
               contentFit="cover"
             />
-            <Text style={styles.artistName} numberOfLines={1}>
+            <Text
+              style={[styles.artistName, { color: colors.textPrimary }]}
+              numberOfLines={1}
+            >
               {artist.name}
             </Text>
-            <Text style={styles.artistTag}>{artist.tag}</Text>
+            <Text
+              style={[styles.artistTag, { color: colors.textSecondary }]}
+            >
+              {artist.tag}
+            </Text>
           </View>
         ))}
       </ScrollView>
 
-      {/* TRENDING TRACKS */}
-      <View style={styles.sectionHeaderRow}>
-        <Text style={styles.sectionTitle}>
-          Trending in {activeCategory}
-        </Text>
-      </View>
-
+      {/* TRACKS */}
       <View style={{ marginBottom: 60 }}>
         {TRENDING_TRACKS.map((track) => (
           <View key={track.id} style={styles.trackRow}>
             <Image
               source={{ uri: track.cover }}
               style={styles.trackCover}
-              contentFit="cover"
             />
 
             <View style={{ flex: 1, marginLeft: 12 }}>
-              <Text style={styles.trackTitle} numberOfLines={1}>
+              <Text
+                style={[styles.trackTitle, { color: colors.textPrimary }]}
+              >
                 {track.title}
               </Text>
-              <Text style={styles.trackArtist}>{track.artist}</Text>
+              <Text
+                style={[
+                  styles.trackArtist,
+                  { color: colors.textSecondary },
+                ]}
+              >
+                {track.artist}
+              </Text>
 
-              <MiniWaveform />
+              <MiniWaveform color={iconMuted} />
             </View>
 
-            {/* ✅ PLAY BUTONU ARTIK GERÇEK FONKSİYONU ÇALIŞTIRIYOR */}
             <TouchableOpacity
-              style={styles.trackPlayButton}
+              style={[
+                styles.trackPlayButton,
+                { backgroundColor: colors.textPrimary },
+              ]}
               onPress={() => {
                 playTrack(track);
                 navigation.navigate("Player");
               }}
             >
-              <Feather name="play" size={18} color="#000" />
+              <Feather name="play" size={18} color={colors.background} />
             </TouchableOpacity>
           </View>
         ))}
@@ -209,23 +257,26 @@ export default function ExploreScreen() {
   );
 }
 
-// Mini waveform
-function MiniWaveform() {
+function MiniWaveform({ color }) {
   const bars = [6, 10, 14, 9, 16, 12, 18, 8, 13, 11];
 
   return (
     <View style={styles.waveContainer}>
-      {bars.map((h, idx) => (
-        <View key={idx} style={[styles.waveBar, { height: h }]} />
+      {bars.map((h, i) => (
+        <View
+          key={i}
+          style={[styles.waveBar, { height: h, backgroundColor: color }]}
+        />
       ))}
     </View>
   );
 }
 
+/* ---------------- STYLES ---------------- */
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#050509",
     paddingHorizontal: 18,
     paddingTop: 18,
   },
@@ -236,18 +287,15 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   title: {
-    color: "#F5F5F7",
     fontSize: 28,
     fontWeight: "800",
   },
 
-  // HERO
   heroCard: {
     borderRadius: 22,
     overflow: "hidden",
     height: 210,
     marginTop: 4,
-    backgroundColor: "#15151F",
   },
   heroImage: {
     ...StyleSheet.absoluteFillObject,
@@ -262,21 +310,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   heroLabel: {
-    color: "#A6B1FF",
     fontSize: 11,
     letterSpacing: 2,
     fontWeight: "600",
   },
   heroTitle: {
-    color: "#FFFFFF",
     fontSize: 22,
     fontWeight: "800",
-    marginTop: 6,
   },
   heroSubtitle: {
-    color: "#E1E1EC",
     fontSize: 13,
-    marginTop: 4,
   },
   heroBottomRow: {
     flexDirection: "row",
@@ -286,13 +329,8 @@ const styles = StyleSheet.create({
   heroTag: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(13, 16, 32, 0.7)",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
   },
   heroTagText: {
-    color: "#A6B1FF",
     fontSize: 11,
     marginLeft: 6,
   },
@@ -300,50 +338,29 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: "#F5F5F7",
     alignItems: "center",
     justifyContent: "center",
   },
 
-  // CATEGORIES
   chip: {
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.12)",
     marginRight: 10,
   },
-  chipActive: {
-    backgroundColor: "#F5F5F7",
-    borderColor: "#F5F5F7",
-  },
-  chipText: {
-    color: "#E0E0E6",
-    fontSize: 13,
-  },
-  chipTextActive: {
-    color: "#050509",
-    fontWeight: "600",
-  },
 
-  // ARTISTS
   sectionHeaderRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
     marginTop: 24,
     marginBottom: 12,
   },
   sectionTitle: {
-    color: "#F5F5F7",
     fontSize: 18,
     fontWeight: "700",
   },
-  sectionLink: {
-    color: "#9FA4C4",
-    fontSize: 13,
-  },
+
   artistCard: {
     width: 120,
     marginRight: 14,
@@ -355,17 +372,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   artistName: {
-    color: "#F5F5F7",
     fontSize: 14,
     fontWeight: "600",
   },
   artistTag: {
-    color: "#9FA4C4",
     fontSize: 12,
-    marginTop: 2,
   },
 
-  // TRACKS
   trackRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -377,26 +390,21 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   trackTitle: {
-    color: "#F5F5F7",
     fontSize: 15,
     fontWeight: "600",
   },
   trackArtist: {
-    color: "#9FA4C4",
     fontSize: 12,
-    marginTop: 2,
   },
   trackPlayButton: {
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: "#F5F5F7",
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 10,
   },
 
-  // MINI WAVEFORM
   waveContainer: {
     flexDirection: "row",
     alignItems: "flex-end",
@@ -406,6 +414,5 @@ const styles = StyleSheet.create({
     width: 3,
     borderRadius: 999,
     marginRight: 2,
-    backgroundColor: "rgba(159,164,196,0.9)",
   },
 });

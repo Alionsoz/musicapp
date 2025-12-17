@@ -9,55 +9,153 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { useNavigation } from "@react-navigation/native"; // ✅ EKLENDİ
+import { useNavigation } from "@react-navigation/native";
+
+// ✅ THEME
+import { useThemeStore } from "../store/themeStore";
 
 export default function ProfileScreen() {
-  const navigation = useNavigation(); // ✅ EKLENDİ
+  const navigation = useNavigation();
+  const { colors, isDark } = useThemeStore();
+
+  const iconStrong = isDark ? "#E6E8FF" : colors.primary;
+  const iconMuted = isDark ? "#8A8FAE" : colors.textMuted;
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={[
+        styles.container,
+        { backgroundColor: colors.background },
+      ]}
+      showsVerticalScrollIndicator={false}
+    >
       {/* HEADER */}
       <View style={styles.headerRow}>
-        <Text style={styles.title}>Profile</Text>
+        <Text style={[styles.title, { color: colors.textPrimary }]}>
+          Profile
+        </Text>
 
-        {/* ⚙️ SETTINGS ICON → SETTINGS SCREEN */}
         <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
-          <Feather name="settings" size={22} color="#F5F5F7" />
+          <Feather
+            name="settings"
+            size={22}
+            color={iconStrong}
+          />
         </TouchableOpacity>
       </View>
 
       {/* PROFILE CARD */}
-      <View style={styles.profileCard}>
-        <BlurView intensity={30} tint="dark" style={styles.blur}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>A</Text>
+      <View
+        style={[
+          styles.profileCard,
+          {
+            backgroundColor: isDark
+              ? "rgba(20,20,28,0.85)"
+              : colors.card,
+          },
+        ]}
+      >
+        <BlurView
+          intensity={isDark ? 35 : 25}
+          tint={isDark ? "dark" : "light"}
+          style={styles.blur}
+        >
+          <View
+            style={[
+              styles.avatar,
+              {
+                backgroundColor: isDark
+                  ? "rgba(255,255,255,0.08)"
+                  : colors.surface,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.avatarText,
+                { color: colors.textPrimary },
+              ]}
+            >
+              A
+            </Text>
           </View>
 
-          <Text style={styles.username}>@alionsoz</Text>
-          <Text style={styles.subText}>Free Plan • Music App</Text>
+          <Text
+            style={[
+              styles.username,
+              { color: colors.textPrimary },
+            ]}
+          >
+            @alionsoz
+          </Text>
+          <Text
+            style={[
+              styles.subText,
+              { color: colors.textSecondary },
+            ]}
+          >
+            Free Plan • Music App
+          </Text>
         </BlurView>
       </View>
 
       {/* ACTIONS */}
-      <View style={styles.section}>
-        <ProfileItem icon="user" label="Edit Profile" />
-        <ProfileItem icon="lock" label="Account & Security" />
-        <ProfileItem icon="bell" label="Notifications" />
-        <ProfileItem icon="moon" label="Appearance" />
+      <View
+        style={[
+          styles.section,
+          { backgroundColor: colors.card },
+        ]}
+      >
+        <ProfileItem
+          icon="user"
+          label="Edit Profile"
+          iconColor={iconStrong}
+        />
+        <ProfileItem
+          icon="lock"
+          label="Account & Security"
+          iconColor={iconStrong}
+        />
+        <ProfileItem
+          icon="bell"
+          label="Notifications"
+          iconColor={iconStrong}
+        />
+        <ProfileItem
+          icon="moon"
+          label="Appearance"
+          iconColor={iconStrong}
+        />
 
-        {/* ✅ SETTINGS ROW EKLENDİ */}
         <ProfileItem
           icon="settings"
           label="Settings"
+          iconColor={iconStrong}
           onPress={() => navigation.navigate("Settings")}
         />
       </View>
 
       {/* DANGER */}
-      <View style={styles.section}>
+      <View
+        style={[
+          styles.section,
+          { backgroundColor: colors.card },
+        ]}
+      >
         <TouchableOpacity style={styles.logout}>
-          <Feather name="log-out" size={18} color="#FF6B6B" />
-          <Text style={styles.logoutText}>Log out</Text>
+          <Feather
+            name="log-out"
+            size={18}
+            color={colors.danger}
+          />
+          <Text
+            style={[
+              styles.logoutText,
+              { color: colors.danger },
+            ]}
+          >
+            Log out
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -66,22 +164,40 @@ export default function ProfileScreen() {
   );
 }
 
-function ProfileItem({ icon, label, onPress }) {
+function ProfileItem({ icon, label, onPress, iconColor }) {
+  const { colors, isDark } = useThemeStore();
+
   return (
     <TouchableOpacity style={styles.item} onPress={onPress}>
       <View style={styles.itemLeft}>
-        <Feather name={icon} size={18} color="#A6B1FF" />
-        <Text style={styles.itemText}>{label}</Text>
+        <Feather
+          name={icon}
+          size={18}
+          color={iconColor}
+        />
+        <Text
+          style={[
+            styles.itemText,
+            { color: colors.textPrimary },
+          ]}
+        >
+          {label}
+        </Text>
       </View>
-      <Feather name="chevron-right" size={18} color="#777C96" />
+      <Feather
+        name="chevron-right"
+        size={18}
+        color={isDark ? "#8A8FAE" : colors.textMuted}
+      />
     </TouchableOpacity>
   );
 }
 
+/* ---------------- STYLES ---------------- */
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#050509",
     paddingHorizontal: 18,
     paddingTop: 18,
   },
@@ -93,7 +209,6 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   title: {
-    color: "#F5F5F7",
     fontSize: 28,
     fontWeight: "800",
   },
@@ -102,7 +217,6 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     overflow: "hidden",
     marginBottom: 26,
-    backgroundColor: "#15151F",
   },
   blur: {
     alignItems: "center",
@@ -112,29 +226,24 @@ const styles = StyleSheet.create({
     width: 84,
     height: 84,
     borderRadius: 42,
-    backgroundColor: "#1F2333",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
   },
   avatarText: {
-    color: "#F5F5F7",
     fontSize: 32,
     fontWeight: "800",
   },
   username: {
-    color: "#FFFFFF",
     fontSize: 18,
     fontWeight: "700",
   },
   subText: {
-    color: "#9FA4C4",
     fontSize: 13,
     marginTop: 4,
   },
 
   section: {
-    backgroundColor: "#0E0E11",
     borderRadius: 18,
     paddingVertical: 6,
     marginBottom: 22,
@@ -152,7 +261,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   itemText: {
-    color: "#F5F5F7",
     fontSize: 15,
     marginLeft: 12,
     fontWeight: "500",
@@ -165,7 +273,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   logoutText: {
-    color: "#FF6B6B",
     fontSize: 15,
     marginLeft: 12,
     fontWeight: "600",

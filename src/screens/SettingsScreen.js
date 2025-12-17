@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "../theme/useTheme";
 
 const SETTINGS_SECTIONS = [
   {
@@ -35,28 +36,90 @@ const SETTINGS_SECTIONS = [
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
+  const { colors, isDark } = useTheme();
+
+  const cardBg = isDark
+    ? "rgba(18,18,26,0.95)"
+    : colors.surface;
+
+  const borderSoft = isDark
+    ? "rgba(255,255,255,0.08)"
+    : colors.border;
+
+  const iconStrong = isDark
+    ? colors.primary
+    : colors.textPrimary;
+
+  const iconMuted = isDark
+    ? "#8C91B8"
+    : colors.textSecondary;
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Settings</Text>
+    <ScrollView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={[styles.header, { color: colors.textPrimary }]}>
+        Settings
+      </Text>
 
       {SETTINGS_SECTIONS.map((section) => (
         <View key={section.title} style={styles.section}>
-          <Text style={styles.sectionTitle}>{section.title}</Text>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: colors.textSecondary },
+            ]}
+          >
+            {section.title}
+          </Text>
 
-          {section.items.map((item) => (
-            <TouchableOpacity
-              key={item.label}
-              style={styles.row}
-              onPress={() => navigation.navigate(item.route)}
-            >
-              <View style={styles.rowLeft}>
-                <Feather name={item.icon} size={18} color="#F5F5F7" />
-                <Text style={styles.rowText}>{item.label}</Text>
-              </View>
-              <Feather name="chevron-right" size={18} color="#777C96" />
-            </TouchableOpacity>
-          ))}
+          <View
+            style={[
+              styles.sectionCard,
+              {
+                backgroundColor: cardBg,
+                borderColor: borderSoft,
+              },
+            ]}
+          >
+            {section.items.map((item, idx) => (
+              <TouchableOpacity
+                key={item.label}
+                style={[
+                  styles.row,
+                  idx !== section.items.length - 1 && {
+                    borderBottomWidth: 1,
+                    borderBottomColor: borderSoft,
+                  },
+                ]}
+                onPress={() => navigation.navigate(item.route)}
+                activeOpacity={0.85}
+              >
+                <View style={styles.rowLeft}>
+                  <Feather
+                    name={item.icon}
+                    size={18}
+                    color={iconStrong}
+                  />
+                  <Text
+                    style={[
+                      styles.rowText,
+                      { color: colors.textPrimary },
+                    ]}
+                  >
+                    {item.label}
+                  </Text>
+                </View>
+
+                <Feather
+                  name="chevron-right"
+                  size={18}
+                  color={iconMuted}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       ))}
     </ScrollView>
@@ -66,39 +129,41 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#050509",
     paddingHorizontal: 18,
     paddingTop: 24,
   },
   header: {
-    color: "#F5F5F7",
     fontSize: 28,
     fontWeight: "800",
     marginBottom: 24,
   },
   section: {
-    marginBottom: 28,
+    marginBottom: 22,
   },
   sectionTitle: {
-    color: "#9FA4C4",
     fontSize: 13,
     marginBottom: 10,
+    letterSpacing: 0.3,
+  },
+  sectionCard: {
+    borderRadius: 18,
+    overflow: "hidden",
+    borderWidth: 1,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.06)",
+    paddingVertical: 15,
+    paddingHorizontal: 16,
   },
   rowLeft: {
     flexDirection: "row",
     alignItems: "center",
   },
   rowText: {
-    color: "#F5F5F7",
     fontSize: 15,
     marginLeft: 12,
+    fontWeight: "500",
   },
 });

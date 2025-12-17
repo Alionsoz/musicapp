@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
@@ -11,43 +11,194 @@ import ProfileScreen from "../screens/ProfileScreen";
 import LoginScreen from "../screens/LoginScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import ThemeScreen from "../screens/ThemeScreen";
-import AboutScreen from "../screens/AboutScreen"; // ✅ EKLENDİ
+import AboutScreen from "../screens/AboutScreen";
 
 import { useUserStore } from "../store/userStore";
 import MiniPlayer from "../components/MiniPlayer";
+import { useTheme } from "../theme/useTheme";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-/* 🔹 Placeholder Screen (Sadece henüz yapılmayanlar için) */
+/* Placeholder Screen */
 function PlaceholderScreen({ title }) {
+  const colors = useTheme();
   return (
     <View
       style={{
         flex: 1,
-        backgroundColor: "#050509",
+        backgroundColor: colors.background,
         alignItems: "center",
         justifyContent: "center",
       }}
     >
-      <Text style={{ color: "#fff", fontSize: 20 }}>{title}</Text>
+      <Feather name="tool" size={22} color={colors.textSecondary} />
+      <View style={{ height: 10 }} />
+      <View>
+        <Feather name="chevron-right" size={1} color="transparent" />
+      </View>
+      <View>
+        <View>
+          <View>
+            <View>
+              <View>
+                <View>
+                  <View>
+                    <View>
+                      <View>
+                        <View>
+                          <View>
+                            <View>
+                              <View>
+                                <View>
+                                  <View>
+                                    <View>
+                                      <View>
+                                        <View>
+                                          <View>
+                                            <View>
+                                              <View>
+                                                <View>
+                                                  <View>
+                                                    <View>
+                                                      <View>
+                                                        <View>
+                                                          <View>
+                                                            <View>
+                                                              <View>
+                                                                <View>
+                                                                  <View>
+                                                                    <View>
+                                                                      <View>
+                                                                        <View>
+                                                                          <View />
+                                                                        </View>
+                                                                      </View>
+                                                                    </View>
+                                                                  </View>
+                                                                </View>
+                                                              </View>
+                                                            </View>
+                                                          </View>
+                                                        </View>
+                                                      </View>
+                                                    </View>
+                                                  </View>
+                                                </View>
+                                              </View>
+                                            </View>
+                                          </View>
+                                        </View>
+                                      </View>
+                                    </View>
+                                  </View>
+                                </View>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View />
+      <View>
+        <View>
+          <View>
+            <View>
+              <View>
+                <View>
+                  <View>
+                    <View>
+                      <View>
+                        <View>
+                          <View>
+                            <View>
+                              <View>
+                                <View>
+                                  <View>
+                                    <View>
+                                      <View>
+                                        <View>
+                                          <View>
+                                            <View>
+                                              <View>
+                                                <View>
+                                                  <View>
+                                                    <View>
+                                                      <View>
+                                                        <View />
+                                                      </View>
+                                                    </View>
+                                                  </View>
+                                                </View>
+                                              </View>
+                                            </View>
+                                          </View>
+                                        </View>
+                                      </View>
+                                    </View>
+                                  </View>
+                                </View>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <View>
+        <View>
+          <View>
+            <View>
+              <View>
+                <View>
+                  <View>
+                    <View>
+                      <View>
+                        <Text style={{ color: colors.textPrimary, fontSize: 20 }}>
+                          {title}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
     </View>
   );
 }
 
 function MainTabs() {
+  const colors = useTheme();
+
   return (
     <View style={{ flex: 1 }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: "#050509",
-            borderTopColor: "#15151F",
+            backgroundColor: colors.background,
+            borderTopColor: colors.border,
             height: 60,
           },
-          tabBarActiveTintColor: "#F5F5F7",
-          tabBarInactiveTintColor: "#777C96",
+          tabBarActiveTintColor: colors.textPrimary,
+          tabBarInactiveTintColor: colors.textSecondary,
           tabBarLabelStyle: {
             fontSize: 11,
             marginBottom: 4,
@@ -95,9 +246,7 @@ export default function AppNavigator() {
             name="OfflineMode"
             children={() => <PlaceholderScreen title="Offline Mode" />}
           />
-
           <Stack.Screen name="Theme" component={ThemeScreen} />
-
           <Stack.Screen
             name="Language"
             children={() => <PlaceholderScreen title="Language" />}
@@ -106,8 +255,6 @@ export default function AppNavigator() {
             name="Privacy"
             children={() => <PlaceholderScreen title="Privacy" />}
           />
-
-          {/* ✅ GERÇEK ABOUT */}
           <Stack.Screen name="About" component={AboutScreen} />
         </>
       )}

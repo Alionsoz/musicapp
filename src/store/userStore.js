@@ -1,30 +1,30 @@
 import { create } from "zustand";
 
 /**
- * Global user state.
- * Stores authentication info, onboarding completion, and profile data.
+ * Global user state
+ * Controls authentication & onboarding flow
  */
 export const useUserStore = create((set) => ({
+  // --- STATE ---
   user: null,
-  username: null,
   hasCompletedOnboarding: false,
 
-  login: (userData) =>
+  // --- ACTIONS ---
+
+  // Fake login (for now)
+  login: () =>
     set({
-      user: userData,
-      hasCompletedOnboarding: false, // always start onboarding
+      user: {
+        id: "1",
+        username: "alionsoz",
+      },
+      hasCompletedOnboarding: true, // onboarding'i şimdilik geçiyoruz
     }),
 
   logout: () =>
     set({
       user: null,
-      username: null,
       hasCompletedOnboarding: false,
-    }),
-
-  setUsername: (value) =>
-    set({
-      username: value,
     }),
 
   completeOnboarding: () =>

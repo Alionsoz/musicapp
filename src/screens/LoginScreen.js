@@ -1,64 +1,95 @@
-// src/screens/LoginScreen.js
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import PrimaryButton from "../components/PrimaryButton";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useUserStore } from "../store/userStore";
 
-/**
- * Login screen where the user begins authentication.
- * For now this screen uses a fake Spotify login for rapid development.
- */
+// ✅ THEME
+import { useThemeStore } from "../store/themeStore";
+
 export default function LoginScreen() {
   const login = useUserStore((state) => state.login);
-
-  function handleFakeSpotifyLogin() {
-    const fakeUser = {
-      id: "user_123",
-      name: "Ali",
-      username: "alion",
-      country: "TR",
-      image:
-        "https://i.scdn.co/image/ab6775700000ee85e43ad12f489b6e54c2a1a7e2",
-    };
-
-    // Update global state only; navigation will react automatically
-    login(fakeUser);
-  }
+  const { colors } = useThemeStore();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Routine</Text>
-      <Text style={styles.subtitle}>
-        Smart music that adapts to your routines
-      </Text>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: colors.background },
+      ]}
+    >
+      <View
+        style={[
+          styles.card,
+          { backgroundColor: colors.card },
+        ]}
+      >
+        <Text
+          style={[
+            styles.title,
+            { color: colors.textPrimary },
+          ]}
+        >
+          Music App
+        </Text>
 
-      <PrimaryButton
-        label="Continue with Spotify"
-        onPress={handleFakeSpotifyLogin}
-      />
+        <Text
+          style={[
+            styles.desc,
+            { color: colors.textSecondary },
+          ]}
+        >
+          A modern music experience tailored for you
+        </Text>
+
+        <TouchableOpacity
+          style={[
+            styles.btn,
+            { backgroundColor: colors.textPrimary },
+          ]}
+          onPress={() => login({ id: "demo-user" })}
+        >
+          <Text
+            style={[
+              styles.btnText,
+              { color: colors.background },
+            ]}
+          >
+            Continue
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
+/* ---------------- STYLES ---------------- */
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#050505",
-    alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 24,
+    padding: 18,
+  },
+  card: {
+    borderRadius: 28,
+    padding: 30,
   },
   title: {
-    fontSize: 32,
-    color: "#FFFFFF",
-    fontWeight: "700",
-    marginBottom: 12,
-    textAlign: "center",
+    fontSize: 26,
+    fontWeight: "800",
+    marginBottom: 10,
   },
-  subtitle: {
-    fontSize: 16,
-    color: "#AAAAAA",
-    textAlign: "center",
-    marginBottom: 32,
+  desc: {
+    marginBottom: 30,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  btn: {
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: "center",
+  },
+  btnText: {
+    fontWeight: "700",
+    fontSize: 15,
   },
 });
